@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<title>No Caminho Certo — Calculadora de Corridas</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+body {
+    background:#000;
+    color:#fff;
+    font-family: Arial, sans-serif;
+    max-width:720px;
+    margin:12px auto;
+    padding:16px;
+    box-sizing:border-box;
+}
+*, *::before, *::after {
+    box-sizing:border-box;
+}
+
+h2 {
+    text-align:center;
+    margin:6px 0 4px;
+    font-size:1.6rem;
+}
+
+label {
+    display:block;
+    margin-top:12px;
+    color:#cbd5e1;
+    font-size:0.95rem;
+}
+
+.small {
+    font-size:13px;
+    color:#94a3b8;
+}
+
+.input-voice-container {
+    position: relative;
+    width: 100%;
+}
+
+input {
+    width:100%;
+    padding:12px 45px 12px 12px;
+    margin-top:6px;
+    font-size:15px;
+    background:#0b0b0b;
+    color:#fff;
+    border:1px solid #222;
+    border-radius:6px;
+}
+
+.voice-btn {
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    background:#222;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:15px;
+    color:#0ef;
+    border:1px solid #333;
+    transition:0.2s;
+}
+.voice-btn.active {
+    background:#0ef;
+    color:#000;
+}
+
+button {
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    font-size:16px;
+    border-radius:8px;
+    border:0;
+    cursor:pointer;
+    touch-action:manipulation;
+}
+
+.btn-primary { background:#06b6d4; color:#001 }
+.btn-ghost { background:#333; color:#fff }
+
+.row {
+    display:flex;
+    gap:10px;
+}
+.col { flex:1 }
+
+#map {
+    height:300px;
+    margin-top:12px;
+    border-radius:10px;
+    border:1px solid #111;
+}
+
+.result-box {
+    margin-top:12px;
+    background:#070707;
+    padding:12px;
+    border-radius:8px;
+    color:#d1fae5;
+    font-size:0.95rem;
+    line-height:1.4;
+}
+
+.alert { color:#fb7185 }
+.kv { color:#86efac; font-weight:700 }
+
+footer {
+    margin-top:18px;
+    text-align:center;
+    font-size:12px;
+    color:#64748b;
+}
+
+/* 📱 Responsivo */
+@media (max-width:640px){
+    body {
+        padding:12px;
+        margin:0;
+    }
+    h2 {
+        font-size:1.35rem;
+    }
+    .row {
+        flex-direction:column;
+        gap:8px;
+    }
+    #map {
+        height:240px;
+    }
+}
+
+@media (max-width:380px){
+    h2 {
+        font-size:1.2rem;
+    }
+    input, button {
+        font-size:14px;
+        padding:11px;
+    }
+    #map {
+        height:200px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h2>🚖 No Caminho Certo</h2>
+<div class="small" style="text-align:center;margin-bottom:8px">
+Calculadora inteligente de corridas
+</div>
+
+<label>Origem (endereço)</label>
+<div class="input-voice-container">
+    <input type="text" id="origem" placeholder="Ex: Praça central, sua cidade">
+    <div class="voice-btn" id="micOrigem">🎤</div>
+</div>
+
+<label>Destino (endereço)</label>
+<div class="input-voice-container">
+    <input type="text" id="destino" placeholder="Ex: Aeroporto, sua cidade">
+    <div class="voice-btn" id="micDestino">🎤</div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <button id="btnRoute" class="btn-primary">📍 Calcular KM (ida e volta)</button>
+  </div>
+  <div class="col">
+    <button id="btnClearRoute" class="btn-ghost">🧹 Limpar rota</button>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<label>Km total (ida e volta)</label>
+<input type="number" id="km" readonly>
+
+<div class="row" style="margin-top:8px">
+  <div class="col">
+    <label>Média do veículo (km / litro)</label>
+    <input type="number" id="media" step="0.1" placeholder="Ex: 10.0">
+  </div>
+  <div class="col">
+    <label>Valor da gasolina (R$/litro)</label>
+    <input type="number" id="gasolina" step="0.01" placeholder="Ex: 6.29">
+  </div>
+</div>
+
+<label>Valor cobrado na corrida (R$)</label>
+<input type="number" id="cobrar" step="0.01" placeholder="Ex: 30.00">
+
+<div class="row">
+  <div class="col">
+    <button id="btnCalc" class="btn-primary">Calcular valores</button>
+  </div>
+  <div class="col">
+    <button id="btnClearAll" class="btn-ghost">Limpar tudo</button>
+  </div>
+</div>
+
+<div id="resultado" class="result-box" style="display:none"></div>
+
+<footer>
+  Criado por <strong>Claudio Almeida</strong><br>
+  © <span id="ano"></span> • OpenStreetMap • Leaflet • OSRM
+</footer>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+document.getElementById("ano").textContent = new Date().getFullYear();
+
+const origemInput = document.getElementById('origem');
+const destinoInput = document.getElementById('destino');
+
+const micOrigem = document.getElementById('micOrigem');
+const micDestino = document.getElementById('micDestino');
+
+function iniciarVoz(botao, input){
+    if(!('webkitSpeechRecognition' in window)){
+        alert("Seu navegador não suporta reconhecimento de voz.");
+        return;
+    }
+
+    const rec = new webkitSpeechRecognition();
+    rec.lang = "pt-BR";
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+
+    botao.classList.add("active");
+
+    rec.start();
+
+    rec.onresult = (event)=>{
+        input.value = event.results[0][0].transcript;
+        botao.classList.remove("active");
+    };
+
+    rec.onerror = ()=>{
+        botao.classList.remove("active");
+        alert("Erro no reconhecimento de voz.");
+    };
+
+    rec.onend = ()=>{
+        botao.classList.remove("active");
+    };
+}
+
+micOrigem.onclick = ()=> iniciarVoz(micOrigem, origemInput);
+micDestino.onclick = ()=> iniciarVoz(micDestino, destinoInput);
+
+/* ------------------ RESTO DO SEU CÓDIGO ORIGINAL ------------------ */
+
+const btnRoute = document.getElementById('btnRoute');
+const btnClearRoute = document.getElementById('btnClearRoute');
+const kmInput = document.getElementById('km');
+const mediaInput = document.getElementById('media');
+const gasolinaInput = document.getElementById('gasolina');
+const cobrarInput = document.getElementById('cobrar');
+const btnCalc = document.getElementById('btnCalc');
+const btnClearAll = document.getElementById('btnClearAll');
+const resultado = document.getElementById('resultado');
+
+/* Mapa */
+const map = L.map('map').setView([-23.5505,-46.6333], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+let routeLayer = null;
+let markers = [];
+
+function showResult(html){
+  resultado.style.display='block';
+  resultado.innerHTML = html;
+}
+function hideResult(){
+  resultado.style.display='none';
+  resultado.innerHTML='';
+}
+function fmt(v){
+  return 'R$ ' + Number(v).toFixed(2).replace('.',',');
+}
+
+/* Geocoding */
+async function geocode(q){
+  try{
+    const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(q));
+    const j = await r.json();
+    if(!j.length) return null;
+    return { lat:+j[0].lat, lon:+j[0].lon };
+  }catch(e){ return null }
+}
+
+/* OSRM */
+async function rota(a,b){
+  const url = `https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`;
+  const r = await fetch(url);
+  const j = await r.json();
+  return j.routes && j.routes[0];
+}
+
+/* Calcular rota */
+btnRoute.onclick = async ()=>{
+  hideResult();
+  if(!origemInput.value || !destinoInput.value) return alert('Informe origem e destino.');
+
+  btnRoute.disabled=true;
+  const a = await geocode(origemInput.value);
+  const b = await geocode(destinoInput.value);
+
+  if(!a || !b){ alert('Endereço não encontrado'); btnRoute.disabled=false; return; }
+
+  const r = await rota(a,b);
+  if(!r){ alert('Erro ao calcular rota'); btnRoute.disabled=false; return; }
+
+  const kmTotal = (r.distance/1000)*2;
+  kmInput.value = kmTotal.toFixed(2);
+
+  if(routeLayer) map.removeLayer(routeLayer);
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+
+  routeLayer = L.geoJSON(r.geometry).addTo(map);
+  markers.push(L.marker([a.lat,a.lon]).addTo(map));
+  markers.push(L.marker([b.lat,b.lon]).addTo(map));
+
+  map.fitBounds(routeLayer.getBounds());
+  btnRoute.disabled=false;
+};
+
+/* Limpar rota */
+btnClearRoute.onclick = ()=>{
+  origemInput.value='';
+  destinoInput.value='';
+  kmInput.value='';
+  hideResult();
+  if(routeLayer) map.removeLayer(routeLayer);
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+};
+
+/* Cálculo financeiro */
+btnCalc.onclick = ()=>{
+  hideResult();
+
+  const km = +kmInput.value;
+  const media = +mediaInput.value;
+  const gasolina = +gasolinaInput.value;
+  const cobrar = +cobrarInput.value;
+
+  if(!km) return alert('Calcule o KM primeiro');
+  if(!media || !gasolina || !cobrar) return alert('Preencha todos os campos');
+
+  const litros = km/media;
+  const custo = litros*gasolina;
+  const custoKm = custo/km;
+  const valorKm = cobrar/km;
+  const lucro = cobrar-custo;
+
+  showResult(`
+    🔴 <strong>CUSTOS</strong><br>
+    ⛽ Litros: <span class="kv">${litros.toFixed(2)}</span><br>
+    💰 Combustível: <span class="kv">${fmt(custo)}</span><br>
+    📏 Custo/km: <span class="kv">${fmt(custoKm)}</span><br><br>
+
+    🟢 <strong>RECEITA</strong><br>
+    💵 Total cobrado: <span class="kv">${fmt(cobrar)}</span><br>
+    🚗 Valor/km: <span class="kv">${fmt(valorKm)}</span><br><br>
+
+    ⚖️ <strong>RESULTADO</strong><br>
+    ${lucro>=0?'✅ Lucro':'❌ Prejuízo'}:
+    <span class="kv ${lucro<0?'alert':''}">${fmt(lucro)}</span>
+  `);
+};
+
+/* Limpar tudo */
+btnClearAll.onclick = ()=>{
+  origemInput.value='';
+  destinoInput.value='';
+  kmInput.value='';
+  mediaInput.value='';
+  gasolinaInput.value='';
+  cobrarInput.value='';
+  hideResult();
+  if(routeLayer) map.removeLayer(routeLayer);
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+};
+</script>
+
+</body>
+</html>
