@@ -96,3 +96,4 @@ Mantenha esses valores sempre atualizados para maior precisão.
 
 Claudio Almeida
 Ferramenta criada para ajudar motoristas a entender seus custos e organizar sua rotina de trabalho.
+(Seja Ético) 
