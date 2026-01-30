@@ -1,99 +1,98 @@
-🚖 No Caminho Certo — Calculadora de Corridas
+# 🚖 No Caminho Certo — Calculadora de Corridas
 
-Ferramenta inteligente criada para motoristas que desejam calcular, de forma rápida e precisa, os custos reais de uma corrida.
-O sistema usa mapas gratuitos, rotas automáticas, reconhecimento de voz e cálculos completos de custos e lucros.
+Ferramenta inteligente criada para motoristas que desejam calcular, de forma rápida e precisa, os **custos reais de uma corrida**. O sistema utiliza mapas gratuitos, rotas automáticas, reconhecimento de voz e cálculos completos de custos e lucros, tudo diretamente no navegador.
 
-✨ Funcionalidades
+---
 
-Cálculo automático de rota usando OpenStreetMap + OSRM
+## ✨ Funcionalidades
 
-Distância total ida e volta medida no mapa
+* Cálculo automático de rota usando **OpenStreetMap + OSRM**
+* Distância total **ida e volta** medida no mapa
+* Geocodificação de endereços com **Nominatim**
+* Reconhecimento de voz nos campos de **origem** e **destino**
+* Cálculo completo de:
 
-Geocodificação com Nominatim
+  * Litros consumidos
+  * Custo total da corrida
+  * Custo por quilômetro
+  * Valor cobrado
+  * Valor cobrado por quilômetro
+  * Lucro ou prejuízo
+* Botão para limpar rota
+* Botão para limpar todos os campos
+* Interface **responsiva**, otimizada para celular
+* Funciona **sem servidor** e sem backend
 
-Reconhecimento de voz nos campos de origem e destino
+---
 
-Cálculo completo de:
+## 🗺️ Tecnologias Utilizadas
 
-Litros consumidos
+* HTML, CSS e JavaScript
+* **Leaflet** para exibição do mapa
+* **OpenStreetMap** para os tiles
+* **OSRM** para cálculo de rotas
+* **Nominatim** para conversão de texto em coordenadas
+* Reconhecimento de voz com `webkitSpeechRecognition`
 
-Custo total
+---
 
-Custo por km
+## 🚀 Como Funciona o Cálculo
 
-Valor cobrado
+1. O usuário digita ou fala a origem e o destino
+2. O sistema:
 
-Valor por km cobrado
+   * Converte os endereços em coordenadas
+   * Calcula a rota automaticamente
+   * Soma a distância de ida e volta
+   * Calcula litros consumidos, custos e resultado final
 
-Lucro ou prejuízo
+Todo o processamento acontece **localmente no navegador**, sem envio de dados para servidores próprios.
 
-Botão para limpar rota
+---
 
-Botão para limpar tudo
+## 🌐 Versão Online
 
-Interface responsiva para celular
+O sistema pode ser utilizado diretamente no navegador:
 
-Sem servidor e sem dependências externas além do mapa
+👉 [https://claudioalmeida23.github.io/calculadora-corridas/](https://claudioalmeida23.github.io/calculadora-corridas/)
 
-🗺️ Tecnologias utilizadas
+---
 
-HTML, CSS e JavaScript
+## 📦 Como Usar Localmente
 
-Leaflet para exibir o mapa
+1. Baixe ou clone este repositório
+2. Abra o arquivo `index.html` em qualquer navegador moderno
+3. Pronto. O sistema já estará funcionando
 
-OpenStreetMap para os tiles do mapa
+---
 
-OSRM para o cálculo da rota
+## 📁 Estrutura do Projeto
 
-Nominatim para conversão de texto em coordenadas
-
-Reconhecimento de voz com webkitSpeechRecognition
-
-🚀 Como funciona o cálculo
-
-O usuário digita (ou fala) a origem e o destino
-
-O sistema:
-
-Converte os endereços em coordenadas
-
-Faz a rota automática
-
-Soma ida e volta
-
-Calcula litros, custos e lucro
-
-Tudo acontece diretamente no navegador, sem backend.
-
-🌐 Versão online
-
-O sistema pode ser usado aqui:
-
-👉 https://claudioalmeida23.github.io/calculadora-corridas/
-
-📦 Como usar localmente
-
-Baixe todos os arquivos do repositório
-
-Abra index.html em qualquer navegador
-
-Pronto, o sistema já funciona
-
-📁 Estrutura do projeto
+```
 calculadora-corridas/
 │ index.html
 │ README.md
-│ (demais arquivos caso adicionados)
+│ (demais arquivos, se adicionados futuramente)
+```
 
-O projeto funciona em um único arquivo HTML integrado.
+Atualmente, o projeto funciona em **um único arquivo HTML integrado**.
 
-📣 Aviso importante
+---
 
-Os valores calculados são estimativas, pois dependem das informações fornecidas pelo usuário, como média do veículo e preço do combustível.
-Mantenha esses valores sempre atualizados para maior precisão.
+## 📣 Aviso Importante
 
-👤 Autor
+Os valores apresentados são **estimativas**, pois dependem das informações fornecidas pelo usuário, como:
 
-Claudio Almeida
-Ferramenta criada para ajudar motoristas a entender seus custos e organizar sua rotina de trabalho.
-(Seja Ético) 
+* Média de consumo do veículo
+* Preço do combustível
+
+Para maior precisão, mantenha esses dados sempre atualizados.
+
+---
+
+## 👤 Autor
+
+**Claudio Almeida**
+Ferramenta criada para ajudar motoristas a entender melhor seus custos, tomar decisões mais conscientes e organizar sua rotina de trabalho.
+
+> *Use com responsabilidade e ética.*
