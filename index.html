@@ -219,6 +219,7 @@ Calculadora inteligente de corridas
 
 <footer>
   Criado por <strong>Claudio Almeida</strong><br>
+  Interface e layout desenvolvidos com apoio da IA (ChatGPT)<br>
   © <span id="ano"></span> • OpenStreetMap • Leaflet • OSRM
 </footer>
 
@@ -245,7 +246,6 @@ function iniciarVoz(botao, input){
     rec.maxAlternatives = 1;
 
     botao.classList.add("active");
-
     rec.start();
 
     rec.onresult = (event)=>{
@@ -265,8 +265,6 @@ function iniciarVoz(botao, input){
 
 micOrigem.onclick = ()=> iniciarVoz(micOrigem, origemInput);
 micDestino.onclick = ()=> iniciarVoz(micDestino, destinoInput);
-
-/* ------------------ RESTO DO SEU CÓDIGO ORIGINAL ------------------ */
 
 const btnRoute = document.getElementById('btnRoute');
 const btnClearRoute = document.getElementById('btnClearRoute');
