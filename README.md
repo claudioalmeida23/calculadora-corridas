@@ -72,7 +72,7 @@ O sistema pode ser utilizado diretamente no navegador:
 calculadora-corridas/
 │ index.html
 │ README.md
-│ (demais arquivos, se adicionados futuramente)
+│ (demais arquivos, sera adicionados futuramente)
 ```
 
 Atualmente, o projeto funciona em **um único arquivo HTML integrado**.
