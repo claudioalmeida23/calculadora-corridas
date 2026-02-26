@@ -14,12 +14,16 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <style>
         :root { --primary: #06b6d4; --bg: #000; --card-bg: #0b0b0b; --text: #fff; --border: #222; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; max-width: 720px; margin: 12px auto; padding: 16px; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; max-width: 720px; margin: 0 auto; padding: 16px; box-sizing: border-box; }
         *, *::before, *::after { box-sizing: border-box; }
+        
+        /* Container Principal */
+        .main-container { min-height: calc(100vh - 120px); }
+
         h2 { text-align: center; color: var(--primary); margin-bottom: 5px; }
         .small { font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 15px; }
         label { display: block; margin-top: 12px; color: #cbd5e1; font-size: 0.9rem; }
-        input { width: 100%; padding: 12px; margin-top: 6px; background: var(--card-bg); color: #fff; border: 1px solid var(--border); border-radius: 8px; }
+        input { width: 100%; padding: 12px; margin-top: 6px; background: var(--card-bg); color: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }
         
         .checkbox-container { display: flex; align-items: center; margin-top: 15px; gap: 10px; background: #111; padding: 10px; border-radius: 8px; border: 1px solid #222; }
         .checkbox-container input { width: auto; margin: 0; }
@@ -28,47 +32,69 @@
         .btn-group-input { position: absolute; right: 8px; top: 12px; display: flex; gap: 5px; }
         .icon-btn { background: #222; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #333; }
         .icon-btn.active { background: var(--primary); color: #000; }
-        button { width: 100%; margin-top: 10px; padding: 14px; font-weight: bold; border-radius: 8px; border: 0; cursor: pointer; }
+        
+        button { width: 100%; margin-top: 10px; padding: 14px; font-weight: bold; border-radius: 8px; border: 0; cursor: pointer; transition: 0.3s; }
+        button:active { transform: scale(0.98); }
         .btn-primary { background: var(--primary); color: #001; }
         .btn-ghost { background: #1f2937; color: #fff; }
         .btn-whatsapp { background: #25d366; color: #fff; margin-top: 10px; display: none; }
+        
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
-        #map { height: 250px; margin-top: 16px; border-radius: 12px; border: 1px solid #111; }
+        #map { height: 250px; margin-top: 16px; border-radius: 12px; border: 1px solid #222; z-index: 1; }
+        
         .result-box { margin-top: 16px; background: #06161a; padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary); line-height: 1.6; }
         .history-box { margin-top: 25px; border-top: 1px solid #333; padding-top: 15px; }
         .history-item { background: #111; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; }
         .kv { color: #86efac; font-weight: 700; }
-        footer { margin-top: 30px; text-align: center; font-size: 11px; color: #64748b; }
+
+        /* Rodapé Organizador */
+        footer { margin-top: 40px; padding: 20px 10px; border-top: 1px solid #222; text-align: center; color: #64748b; line-height: 1.5; }
+        footer a { color: var(--primary); text-decoration: none; opacity: 0.8; }
+        .tech-credits { margin-top: 8px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+        /* Espaço para Anúncio (Dica de Monetização) */
+        .ad-space { width: 100%; min-height: 50px; background: #0a0a0a; margin: 15px 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #333; border: 1px dashed #222; }
     </style>
 </head>
 <body>
 
+<div class="main-container">
     <h2>🚖 No Caminho Certo</h2>
     <div class="small">Calculadora de Viagens</div>
+
+    <div class="ad-space">PUBLICIDADE</div>
 
     <label>Origem</label>
     <div class="input-voice-container">
         <input type="text" id="origem" placeholder="Local de partida">
         <div class="btn-group-input">
-            <div class="icon-btn" id="gpsOrigem"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5985E1"><path d="M307-113.5Q240-147 240-200q0-24 14.5-44.5T295-280l63 59q-9 4-19.5 9T322-200q13 16 60 28t98 12q51 0 98.5-12t60.5-28q-7-8-18-13t-21-9l62-60q28 16 43 36.5t15 45.5q0 53-67 86.5T480-80q-106 0-173-33.5ZM481-300q99-73 149-146.5T680-594q0-102-65-154t-135-52q-70 0-135 52t-65 154q0 67 49 139.5T481-300Zm-1 100Q339-304 269.5-402T200-594q0-71 25.5-124.5T291-808q40-36 90-54t99-18q49 0 99 18t90 54q40 36 65.5 89.5T760-594q0 94-69.5 192T480-200Zm0-320q33 0 56.5-23.5T560-600q0-33-23.5-56.5T480-680q-33 0-56.5 23.5T400-600q0 33 23.5 56.5T480-520Zm0-80Z"/></svg></div>
-            <div class="icon-btn" id="micOrigem"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5985E1"><path d="M395-435q-35-35-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35q-50 0-85-35Zm85-205Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm68.5-371.5Q520-503 520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480q17 0 28.5-11.5Z"/></svg></div>
+            <div class="icon-btn" id="gpsOrigem" title="Usar GPS">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#5985E1"><path d="M307-113.5Q240-147 240-200q0-24 14.5-44.5T295-280l63 59q-9 4-19.5 9T322-200q13 16 60 28t98 12q51 0 98.5-12t60.5-28q-7-8-18-13t-21-9l62-60q28 16 43 36.5t15 45.5q0 53-67 86.5T480-80q-106 0-173-33.5ZM481-300q99-73 149-146.5T680-594q0-102-65-154t-135-52q-70 0-135 52t-65 154q0 67 49 139.5T481-300Zm-1 100Q339-304 269.5-402T200-594q0-71 25.5-124.5T291-808q40-36 90-54t99-18q49 0 99 18t90 54q40 36 65.5 89.5T760-594q0 94-69.5 192T480-200Zm0-320q33 0 56.5-23.5T560-600q0-33-23.5-56.5T480-680q-33 0-56.5 23.5T400-600q0 33 23.5 56.5T480-520Zm0-80Z"/></svg>
+            </div>
+            <div class="icon-btn" id="micOrigem" title="Falar">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#5985E1"><path d="M395-435q-35-35-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35q-50 0-85-35Zm85-205Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm68.5-371.5Q520-503 520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480q17 0 28.5-11.5Z"/></svg>
+            </div>
         </div>
     </div>
 
     <label>Destino</label>
     <div class="input-voice-container">
         <input type="text" id="destino" placeholder="Destino final">
-        <div class="btn-group-input"><div class="icon-btn" id="micDestino"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5985E1"><path d="M395-435q-35-35-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35q-50 0-85-35Zm85-205Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm68.5-371.5Q520-503 520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480q17 0 28.5-11.5Z"/></svg></div></div>
+        <div class="btn-group-input">
+            <div class="icon-btn" id="micDestino">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#5985E1"><path d="M395-435q-35-35-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35q-50 0-85-35Zm85-205Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm68.5-371.5Q520-503 520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480q17 0 28.5-11.5Z"/></svg>
+            </div>
+        </div>
     </div>
 
     <div class="checkbox-container">
         <input type="checkbox" id="idaEVolta" checked>
-        <label style="margin:0">Calcular Ida e Volta?</label>
+        <label style="margin:0; cursor:pointer" for="idaEVolta">Calcular Ida e Volta?</label>
     </div>
 
     <div class="row">
-        <div class="col"><button id="btnRoute" class="btn-primary">Calcular Rota</button></div>
+        <div class="col"><button id="btnRoute" class="btn-primary">🗺️ Ver Rota</button></div>
         <div class="col"><button id="btnClear" class="btn-ghost">Limpar</button></div>
     </div>
 
@@ -88,18 +114,18 @@
     <div class="row">
         <div class="col">
             <label>Consumo (KM/L)</label>
-            <input type="number" id="media" step="0.1">
+            <input type="number" id="media" step="0.1" placeholder="Ex: 10.5">
         </div>
         <div class="col">
             <label>Preço Litro (R$)</label>
-            <input type="number" id="gasolina" step="0.01">
+            <input type="number" id="gasolina" step="0.01" placeholder="Ex: 5.89">
         </div>
     </div>
 
     <label>Valor da Corrida (R$)</label>
-    <input type="number" id="cobrar" step="0.01">
+    <input type="number" id="cobrar" step="0.01" placeholder="Quanto o passageiro vai pagar?">
 
-    <button id="btnCalc" class="btn-primary" style="background:#10b981;">💰 Calcular</button>
+    <button id="btnCalc" class="btn-primary" style="background:#10b981; margin-top: 20px;">💰 Calcular Lucro</button>
     
     <div id="resultado" class="result-box" style="display:none"></div>
     <button id="btnZap" class="btn-whatsapp">📱 Enviar Orçamento via WhatsApp</button>
@@ -107,73 +133,86 @@
     <div class="history-box">
         <h4>🕒 Últimas Corridas (Hoje)</h4>
         <div id="listaHistorico"></div>
-        <button id="btnLimparHistorico" class="btn-ghost" style="font-size: 11px; padding: 5px;">Apagar Histórico</button>
+        <button id="btnLimparHistorico" class="btn-ghost" style="font-size: 11px; padding: 5px; width: auto;">Apagar Histórico</button>
     </div>
+</div>
 
-    <footer>
-    Criado por Claudio Almeida • <span id="ano"></span><br>
-    <div style="margin-top: 5px; opacity: 0.7; font-size: 10px;">
-        Dados: © <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color: #64748b;">OpenStreetMap</a> contributors<br>
-        Rotas: <a href="http://project-osrm.org/" target="_blank" style="color: #64748b;">OSRM</a>
+<footer>
+    <div>Criado por <strong>Claudio Almeida</strong> &copy; <span id="ano"></span></div>
+    <div class="tech-credits">
+        Dados Geográficos: <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a><br>
+        Motor de Rotas: <a href="http://project-osrm.org/" target="_blank">OSRM</a>
     </div>
 </footer>
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        // Registro do Service Worker para Instalação PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
-        }
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    // Registro do Service Worker (PWA)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+    }
 
-        const inputs = ['origem', 'destino', 'km', 'media', 'gasolina', 'cobrar', 'tempo_min'].reduce((acc, id) => ({...acc, [id]: document.getElementById(id)}), {});
-        const map = L.map('map').setView([-23.5505, -46.6333], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        let routeLayer = null, markers = [];
+    const inputs = ['origem', 'destino', 'km', 'media', 'gasolina', 'cobrar', 'tempo_min'].reduce((acc, id) => ({...acc, [id]: document.getElementById(id)}), {});
+    
+    // Inicialização do Mapa
+    const map = L.map('map').setView([-23.5505, -46.6333], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+    
+    let routeLayer = null, markers = [];
 
-        window.onload = () => {
-            inputs.media.value = localStorage.getItem('media') || '';
-            inputs.gasolina.value = localStorage.getItem('gasolina') || '';
-            document.getElementById("ano").textContent = new Date().getFullYear();
-            atualizarInterfaceHistorico();
+    window.onload = () => {
+        inputs.media.value = localStorage.getItem('media') || '';
+        inputs.gasolina.value = localStorage.getItem('gasolina') || '';
+        document.getElementById("ano").textContent = new Date().getFullYear();
+        atualizarInterfaceHistorico();
+    };
+
+    // --- GEOLOCALIZAÇÃO ---
+    document.getElementById('gpsOrigem').onclick = () => {
+        if (!navigator.geolocation) return alert("GPS não suportado");
+        navigator.geolocation.getCurrentPosition(p => {
+            inputs.origem.value = "Minha Localização";
+            inputs.origem.dataset.lat = p.coords.latitude;
+            inputs.origem.dataset.lon = p.coords.longitude;
+        }, () => alert("Erro ao obter localização. Verifique as permissões."));
+    };
+
+    // --- VOZ ---
+    function iniciarVoz(btn, inp) {
+        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!Speech) return alert("Voz não suportada neste navegador.");
+        const rec = new Speech();
+        rec.lang = "pt-BR";
+        rec.onstart = () => btn.classList.add('active');
+        rec.onend = () => btn.classList.remove('active');
+        rec.onresult = (e) => inp.value = e.results[0][0].transcript;
+        rec.start();
+    }
+    document.getElementById('micOrigem').onclick = () => iniciarVoz(document.getElementById('micOrigem'), inputs.origem);
+    document.getElementById('micDestino').onclick = () => iniciarVoz(document.getElementById('micDestino'), inputs.destino);
+
+    // --- ROTA ---
+    document.getElementById('btnRoute').onclick = async () => {
+        const btn = document.getElementById('btnRoute');
+        const geocode = async (q) => {
+            if(q === "Minha Localização") return { lat: inputs.origem.dataset.lat, lon: inputs.origem.dataset.lon };
+            const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+            const j = await r.json(); return j[0] ? {lat: j[0].lat, lon: j[0].lon} : null;
         };
 
-        // GPS E VOZ
-        document.getElementById('gpsOrigem').onclick = () => {
-            navigator.geolocation.getCurrentPosition(p => {
-                inputs.origem.value = "Minha Localização";
-                inputs.origem.dataset.lat = p.coords.latitude;
-                inputs.origem.dataset.lon = p.coords.longitude;
-            });
-        };
-
-        function iniciarVoz(btn, inp) {
-            const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            rec.lang = "pt-BR";
-            rec.onstart = () => btn.classList.add('active');
-            rec.onend = () => btn.classList.remove('active');
-            rec.onresult = (e) => inp.value = e.results[0][0].transcript;
-            rec.start();
-        }
-        document.getElementById('micOrigem').onclick = () => iniciarVoz(document.getElementById('micOrigem'), inputs.origem);
-        document.getElementById('micDestino').onclick = () => iniciarVoz(document.getElementById('micDestino'), inputs.destino);
-
-        // ROTA
-        btnRoute.onclick = async () => {
-            const geocode = async (q) => {
-                if(q === "Minha Localização") return { lat: inputs.origem.dataset.lat, lon: inputs.origem.dataset.lon };
-                const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}`);
-                const j = await r.json(); return j[0] ? {lat: j[0].lat, lon: j[0].lon} : null;
-            };
+        try {
+            btn.innerText = "Buscando...";
             const a = await geocode(inputs.origem.value);
             const b = await geocode(inputs.destino.value);
-            if(!a || !b) return alert("Endereço não encontrado");
+            if(!a || !b) throw new Error("Endereço não encontrado");
 
             const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`);
             const data = await res.json();
             const route = data.routes[0];
 
             const multiplicador = document.getElementById('idaEVolta').checked ? 2 : 1;
-            
             inputs.km.value = ((route.distance / 1000) * multiplicador).toFixed(2);
             inputs.tempo_min.value = Math.round((route.duration / 60) * multiplicador);
 
@@ -181,58 +220,63 @@
             markers.forEach(m => map.removeLayer(m));
             routeLayer = L.geoJSON(route.geometry, {style: {color: '#06b6d4', weight: 5}}).addTo(map);
             markers = [L.marker([a.lat, a.lon]).addTo(map), L.marker([b.lat, b.lon]).addTo(map)];
-            map.fitBounds(routeLayer.getBounds());
+            map.fitBounds(routeLayer.getBounds(), {padding: [50, 50]});
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            btn.innerText = "🗺️ Ver Rota";
+        }
+    };
+
+    // --- CÁLCULO FINAL ---
+    document.getElementById('btnCalc').onclick = () => {
+        const km = +inputs.km.value, med = +inputs.media.value, gas = +inputs.gasolina.value, cob = +inputs.cobrar.value;
+        if(!km || !med || !gas || !cob) return alert("Calcule a rota e preencha o consumo/preço.");
+
+        localStorage.setItem('media', med);
+        localStorage.setItem('gasolina', gas);
+
+        const custo = (km / med) * gas;
+        const lucro = cob - custo;
+
+        const resDiv = document.getElementById('resultado');
+        resDiv.style.display = 'block';
+        resDiv.innerHTML = `
+            <div style="font-size:0.9rem">⛽ Gasto Combustível: <span style="color:#ef4444">R$ ${custo.toFixed(2)}</span></div>
+            <div style="margin-top:5px; font-size:1.1rem">💰 <b>LUCRO LÍQUIDO: <span class="kv">R$ ${lucro.toFixed(2)}</span></b></div>
+        `;
+
+        const btnZap = document.getElementById('btnZap');
+        btnZap.style.display = 'block';
+        btnZap.onclick = () => {
+            const tipo = document.getElementById('idaEVolta').checked ? "Ida e Volta" : "Só Ida";
+            const txt = `*Orçamento de Corrida (${tipo})*%0A📍 Origem: ${inputs.origem.value}%0A🏁 Destino: ${inputs.destino.value}%0A📏 Distância: ${km}km%0A⏱️ Tempo: ${inputs.tempo_min.value} min%0A💰 *Valor Total: R$ ${cob.toFixed(2)}*`;
+            window.open(`https://wa.me/?text=${txt}`);
         };
 
-        // CÁLCULO
-        document.getElementById('btnCalc').onclick = () => {
-            const km = +inputs.km.value, med = +inputs.media.value, gas = +inputs.gasolina.value, cob = +inputs.cobrar.value;
-            if(!km || !med || !gas || !cob) return alert("Preencha tudo!");
+        salvarNoHistorico(inputs.destino.value, lucro);
+    };
 
-            localStorage.setItem('media', med);
-            localStorage.setItem('gasolina', gas);
+    function salvarNoHistorico(dest, lucro) {
+        let hist = JSON.parse(localStorage.getItem('historico') || '[]');
+        hist.unshift({ dest, lucro, hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+        localStorage.setItem('historico', JSON.stringify(hist.slice(0, 5))); 
+        atualizarInterfaceHistorico();
+    }
 
-            const custo = (km / med) * gas;
-            const lucro = cob - custo;
+    function atualizarInterfaceHistorico() {
+        const lista = document.getElementById('listaHistorico');
+        const hist = JSON.parse(localStorage.getItem('historico') || '[]');
+        lista.innerHTML = hist.map(i => `
+            <div class="history-item">
+                <span>${i.hora} - ${i.dest.substring(0,18)}...</span>
+                <span class="kv">R$ ${i.lucro.toFixed(2)}</span>
+            </div>
+        `).join('') || '<p style="font-size:11px; color:#444">Nenhuma corrida calculada hoje.</p>';
+    }
 
-            document.getElementById('resultado').style.display = 'block';
-            document.getElementById('resultado').innerHTML = `
-                <b>Resumo:</b><br> Combustível: <span class="kv">R$ ${custo.toFixed(2)}</span><br>
-                <b>LUCRO REAL: <span class="kv" style="font-size:1.2rem">R$ ${lucro.toFixed(2)}</span></b>
-            `;
-
-            const btnZap = document.getElementById('btnZap');
-            btnZap.style.display = 'block';
-            btnZap.onclick = () => {
-                const tipoViagem = document.getElementById('idaEVolta').checked ? "Ida e Volta" : "Só Ida";
-                const txt = `*Orçamento de Corrida (${tipoViagem})*%0A📍 De: ${inputs.origem.value}%0A🏁 Para: ${inputs.destino.value}%0A📏 Distância: ${km}km%0A⏱️ Tempo: ${inputs.tempo_min.value} min%0A💰 *Valor: R$ ${cob.toFixed(2)}*`;
-                window.open(`https://wa.me/?text=${txt}`);
-            };
-
-            salvarNoHistorico(inputs.destino.value, lucro);
-        };
-
-        function salvarNoHistorico(dest, lucro) {
-            let hist = JSON.parse(localStorage.getItem('historico') || '[]');
-            hist.unshift({ dest, lucro, hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-            localStorage.setItem('historico', JSON.stringify(hist.slice(0, 5))); 
-            atualizarInterfaceHistorico();
-        }
-
-        function atualizarInterfaceHistorico() {
-            const lista = document.getElementById('listaHistorico');
-            const hist = JSON.parse(localStorage.getItem('historico') || '[]');
-            lista.innerHTML = hist.map(i => `
-                <div class="history-item">
-                    <span>${i.hora} - ${i.dest.substring(0,20)}...</span>
-                    <span class="kv">R$ ${i.lucro.toFixed(2)}</span>
-                </div>
-            `).join('') || '<p style="font-size:11px">Nenhuma corrida hoje.</p>';
-        }
-
-        document.getElementById('btnLimparHistorico').onclick = () => { localStorage.removeItem('historico'); atualizarInterfaceHistorico(); };
-        document.getElementById('btnClear').onclick = () => location.reload();
-    </script>
+    document.getElementById('btnLimparHistorico').onclick = () => { localStorage.removeItem('historico'); atualizarInterfaceHistorico(); };
+    document.getElementById('btnClear').onclick = () => { if(confirm("Limpar todos os campos?")) location.reload(); };
+</script>
 </body>
 </html>
-
