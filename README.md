@@ -4,6 +4,17 @@ Ferramenta inteligente criada para motoristas que desejam calcular, de forma rá
 
 ---
 
+## 🚧 Status do Projeto
+
+⚠️ **Este projeto está em desenvolvimento.**
+
+A ferramenta está sendo **melhorada continuamente**, com novos recursos e ajustes sendo adicionados regularmente.
+Embora **ainda não esteja 100% finalizada**, a aplicação **já pode ser utilizada normalmente** para cálculos de corridas e testes.
+
+Sugestões, melhorias e feedback são sempre bem-vindos para ajudar na evolução do projeto.
+
+---
+
 ## ✨ Funcionalidades
 
 * Cálculo automático de rota usando **OpenStreetMap + OSRM**
@@ -27,7 +38,9 @@ Ferramenta inteligente criada para motoristas que desejam calcular, de forma rá
 
 ## 🗺️ Tecnologias Utilizadas
 
-* HTML, CSS e JavaScript
+* HTML
+* CSS
+* JavaScript
 * **Leaflet** para exibição do mapa
 * **OpenStreetMap** para os tiles
 * **OSRM** para cálculo de rotas
@@ -54,7 +67,7 @@ Todo o processamento acontece **localmente no navegador**, sem envio de dados pa
 
 O sistema pode ser utilizado diretamente no navegador:
 
-👉 [https://claudioalmeida23.github.io/calculadora-corridas/](https://claudioalmeida23.github.io/calculadora-corridas/)
+👉 https://claudioalmeida23.github.io/calculadora-corridas/
 
 ---
 
@@ -72,7 +85,7 @@ O sistema pode ser utilizado diretamente no navegador:
 calculadora-corridas/
 │ index.html
 │ README.md
-│ (demais arquivos, sera adicionados futuramente)
+│ (demais arquivos serão adicionados futuramente)
 ```
 
 Atualmente, o projeto funciona em **um único arquivo HTML integrado**.
@@ -92,7 +105,8 @@ Para maior precisão, mantenha esses dados sempre atualizados.
 
 ## 👤 Autor
 
-**Claudio Almeida**
+**Claudio Almeida.CAAS**
+
 Ferramenta criada para ajudar motoristas a entender melhor seus custos, tomar decisões mais conscientes e organizar sua rotina de trabalho.
 
 > *Use com responsabilidade e ética.*
