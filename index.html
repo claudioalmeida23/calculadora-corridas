@@ -5,32 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>No Caminho Certo — Calculadora</title>
     
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com;">
+    <meta name="referrer" content="no-referrer">
+
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#06b6d4">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+
     <style>
         :root { --primary: #06b6d4; --bg: #000; --card-bg: #0b0b0b; --text: #fff; --border: #222; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; max-width: 720px; margin: 0 auto; padding: 16px; box-sizing: border-box; }
         *, *::before, *::after { box-sizing: border-box; }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 5px; font-weight: 700; }
         .small { font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 15px; }
         label { display: block; margin-top: 12px; color: #cbd5e1; font-size: 0.9rem; }
-        input { width: 100%; padding: 12px; margin-top: 6px; background: var(--card-bg); color: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }
-        .checkbox-container { display: flex; align-items: center; margin-top: 15px; gap: 10px; background: #111; padding: 10px; border-radius: 8px; border: 1px solid #222; }
+        input { width: 100%; padding: 12px; margin-top: 6px; background: var(--card-bg); color: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .checkbox-container { display: flex; align-items: center; margin-top: 15px; gap: 10px; background: #111; padding: 12px; border-radius: 8px; border: 1px solid #222; }
         .input-voice-container { position: relative; }
         .btn-group-input { position: absolute; right: 8px; top: 12px; display: flex; gap: 5px; }
-        .icon-btn { background: #222; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #333; }
+        .icon-btn { background: #222; width: 34px; height: 34px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #333; transition: 0.2s; }
+        .icon-btn:active { background: var(--primary); color: #000; }
         button { width: 100%; margin-top: 10px; padding: 14px; font-weight: bold; border-radius: 8px; border: 0; cursor: pointer; transition: 0.3s; }
+        button:active { transform: scale(0.98); }
         .btn-primary { background: var(--primary); color: #001; }
         .btn-ghost { background: #1f2937; color: #fff; }
         .btn-whatsapp { background: #25d366; color: #fff; margin-top: 10px; display: none; }
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
-        #map { height: 250px; margin-top: 16px; border-radius: 12px; border: 1px solid #222; z-index: 1; }
-        .result-box { margin-top: 16px; background: #06161a; padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary); }
+        #map { height: 250px; margin-top: 16px; border-radius: 12px; border: 1px solid #222; z-index: 1; background: #000; }
+        .result-box { margin-top: 16px; background: #06161a; padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary); line-height: 1.6; }
         .kv { color: #86efac; font-weight: 700; }
-        footer { margin-top: 40px; padding: 20px; border-top: 1px solid #222; text-align: center; font-size: 11px; }
-        .ad-space { width: 100%; min-height: 50px; background: #0a0a0a; margin: 15px 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #333; border: 1px dashed #222; }
+        .history-item { background: #111; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; border: 1px solid #222; }
+        .privacidade-box { margin-top:30px; padding:15px; background:#0a0a0a; border:1px solid #222; border-radius:10px; font-size:12px; color:#9ca3af; }
+        footer { margin-top: 40px; padding: 20px; border-top: 1px solid #222; text-align: center; font-size: 11px; color: #64748b; }
     </style>
 </head>
 <body>
@@ -39,14 +50,12 @@
     <h2>🚖 No Caminho Certo</h2>
     <div class="small">Calculadora de Viagens</div>
 
-   
-
     <label>Origem</label>
     <div class="input-voice-container">
         <input type="text" id="origem" placeholder="Local de partida">
         <div class="btn-group-input">
-            <div class="icon-btn" id="gpsOrigem">📍</div>
-            <div class="icon-btn" id="micOrigem">🎤</div>
+            <div class="icon-btn" id="gpsOrigem" title="Usar meu GPS">📍</div>
+            <div class="icon-btn" id="micOrigem" title="Falar origem">🎤</div>
         </div>
     </div>
 
@@ -54,7 +63,7 @@
     <div class="input-voice-container">
         <input type="text" id="destino" placeholder="Destino final">
         <div class="btn-group-input">
-            <div class="icon-btn" id="micDestino">🎤</div>
+            <div class="icon-btn" id="micDestino" title="Falar destino">🎤</div>
         </div>
     </div>
 
@@ -71,308 +80,193 @@
     <div id="map"></div>
 
     <div class="row">
-        <div class="col"><label>KM</label><input type="number" id="km" readonly></div>
-        <div class="col"><label>Minutos</label><input type="number" id="tempo_min" readonly></div>
+        <div class="col"><label>KM Total</label><input type="number" id="km" readonly></div>
+        <div class="col"><label>Tempo (Min)</label><input type="number" id="tempo_min" readonly></div>
     </div>
 
     <div class="row">
-        <div class="col"><label>KM/L</label><input type="number" id="media" step="0.1"></div>
-        <div class="col"><label>Preço R$</label><input type="number" id="gasolina" step="0.01"></div>
+        <div class="col"><label>Consumo (KM/L)</label><input type="number" id="media" step="0.1" placeholder="Ex: 10.5"></div>
+        <div class="col"><label>Preço Litro (R$)</label><input type="number" id="gasolina" step="0.01" placeholder="Ex: 5.89"></div>
     </div>
 
-    <label>Valor a Cobrar (R$)</label>
-    <input type="number" id="cobrar" step="0.01">
+    <label>Valor da Corrida (R$)</label>
+    <input type="number" id="cobrar" step="0.01" placeholder="Quanto vai cobrar do cliente">
 
-    <button id="btnCalc" class="btn-primary" style="background:#10b981;">💰 Calcular Lucro Líquido</button>
+    <button id="btnCalc" class="btn-primary" style="background:#10b981; margin-top: 20px;">💰 Calcular Lucro Líquido</button>
     
     <div id="resultado" class="result-box" style="display:none"></div>
-    <button id="btnZap" class="btn-whatsapp">📱 WhatsApp</button>
+    <button id="btnZap" class="btn-whatsapp">📱 Enviar Orçamento via WhatsApp</button>
 
-    <div class="history-box" style="margin-top:20px">
-        <h4>🕒 Últimos Cálculos</h4>
+    <div class="history-box" style="margin-top:25px">
+        <h4 style="margin-bottom:10px; color:var(--primary)">🕒 Últimos Cálculos</h4>
         <div id="listaHistorico"></div>
+        <button id="btnLimparHistorico" class="btn-ghost" style="font-size: 10px; padding: 5px; width: auto; margin-top:10px;">Apagar Histórico</button>
     </div>
 </div>
 
-<div style="margin-top:30px; padding:15px; background:#0a0a0a; border:1px solid #222; border-radius:10px; font-size:12px; color:#9ca3af;">
-    🔒 <strong>Privacidade</strong><br><br>
-    Este aplicativo utiliza sua localização apenas para calcular rotas e distâncias em tempo real.<br>
-    Nenhum dado de localização, endereço ou rota é armazenado em servidores próprios.<br>
-    As consultas são processadas diretamente pelos serviços OpenStreetMap, Nominatim e OSRM.<br>
-    Ao utilizar o GPS, você concorda com o uso temporário dessas informações para funcionamento do app.
-</div>
-
-    
-<footer>
-    <strong>Claudio Almeida.CAAS</strong><br>
-    © <span id="ano"></span><br><br>
-
-    🗺️ Mapa: OpenStreetMap<br>
-    🚗 Rotas: OSRM (Open Source Routing Machine)<br>
-    📍 Geocodificação: Nominatim OpenStreetMap<br>
-    🎤 Voz: Web Speech API<br>
-    📡 GPS: Geolocation API do Navegador<br>
-    💬 Compartilhamento: WhatsApp API<br>
-</footer>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-    const inputs = ['origem', 'destino', 'km', 'media', 'gasolina', 'cobrar', 'tempo_min'].reduce((acc, id) => ({...acc, [id]: document.getElementById(id)}), {});
-    
-    const map = L.map('map').setView([-23.55, -46.63], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    let routeLayer = null, markers = [];
-
-    async function geocode(query) {
-        if(query === "Minha Localização") return { lat: inputs.origem.dataset.lat, lon: inputs.origem.dataset.lon };
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
-        const data = await res.json();
-        return data.length ? { lat: data[0].lat, lon: data[0].lon } : null;
-    }
-
-    document.getElementById('gpsOrigem').onclick = () => {
-        navigator.geolocation.getCurrentPosition(p => {
-            inputs.origem.value = "Minha Localização";
-            inputs.origem.dataset.lat = p.coords.latitude;
-            inputs.origem.dataset.lon = p.coords.longitude;
-            map.setView([p.coords.latitude, p.coords.longitude], 15);
-        });
-    };
-
-    function iniciarVoz(inp) {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!Speech) return alert("Erro de voz");
-        const rec = new Speech();
-        rec.lang = "pt-BR";
-        rec.onresult = (e) => { inp.value = e.results[0][0].transcript; };
-        rec.start();
-    }
-
-    document.getElementById('micOrigem').onclick = () => iniciarVoz(inputs.origem);
-    document.getElementById('micDestino').onclick = () => iniciarVoz(inputs.destino);
-
-    document.getElementById('btnRoute').onclick = async () => {
-        const a = await geocode(inputs.origem.value);
-        const b = await geocode(inputs.destino.value);
-        if(!a || !b) return alert("Local não encontrado");
-
-        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`);
-        const data = await res.json();
-        const route = data.routes[0];
-        const multi = document.getElementById('idaEVolta').checked ? 2 : 1;
-
-        inputs.km.value = ((route.distance / 1000) * multi).toFixed(2);
-        inputs.tempo_min.value = Math.round((route.duration / 60) * multi);
-
-        if (routeLayer) map.removeLayer(routeLayer);
-        routeLayer = L.geoJSON(route.geometry, {style: {color: '#06b6d4', weight: 6}}).addTo(map);
-        map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
-    };
-
-    document.getElementById('btnCalc').onclick = () => {
-        const km = +inputs.km.value, med = +inputs.media.value, gas = +inputs.gasolina.value, cob = +inputs.cobrar.value;
-        const custo = (km / med) * gas;
-        const lucro = cob - custo;
-
-        const resDiv = document.getElementById('resultado');
-        resDiv.style.display = 'block';
-        resDiv.innerHTML = `💰 <b>LUCRO LÍQUIDO: <span class="kv">R$ ${lucro.toFixed(2)}</span></b>`;
-        
-        document.getElementById('btnZap').style.display = 'block';
-        document.getElementById('btnZap').onclick = () => {
-            const txt = `*Calculadora Viagem*%0A📍 De: ${inputs.origem.value}%0A🏁 Para: ${inputs.destino.value}%0A💰 *Total: R$ ${cob.toFixed(2)}*`;
-            window.open(`https://wa.me/?text=${txt}`);
-        };
-    };
-
-    document.getElementById("ano").textContent = new Date().getFullYear();
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>No Caminho Certo — Calculadora</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#06b6d4">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-    <style>
-        :root { --primary: #06b6d4; --bg: #000; --card-bg: #0b0b0b; --text: #fff; --border: #222; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; max-width: 720px; margin: 0 auto; padding: 16px; box-sizing: border-box; }
-        *, *::before, *::after { box-sizing: border-box; }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 5px; }
-        .small { font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 15px; }
-        label { display: block; margin-top: 12px; color: #cbd5e1; font-size: 0.9rem; }
-        input { width: 100%; padding: 12px; margin-top: 6px; background: var(--card-bg); color: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }
-        .checkbox-container { display: flex; align-items: center; margin-top: 15px; gap: 10px; background: #111; padding: 10px; border-radius: 8px; border: 1px solid #222; }
-        .input-voice-container { position: relative; }
-        .btn-group-input { position: absolute; right: 8px; top: 12px; display: flex; gap: 5px; }
-        .icon-btn { background: #222; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #333; }
-        button { width: 100%; margin-top: 10px; padding: 14px; font-weight: bold; border-radius: 8px; border: 0; cursor: pointer; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: #001; }
-        .btn-ghost { background: #1f2937; color: #fff; }
-        .btn-whatsapp { background: #25d366; color: #fff; margin-top: 10px; display: none; }
-        .row { display: flex; gap: 10px; }
-        .col { flex: 1; }
-        #map { height: 250px; margin-top: 16px; border-radius: 12px; border: 1px solid #222; z-index: 1; }
-        .result-box { margin-top: 16px; background: #06161a; padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary); }
-        .kv { color: #86efac; font-weight: 700; }
-        footer { margin-top: 40px; padding: 20px; border-top: 1px solid #222; text-align: center; font-size: 11px; }
-        .ad-space { width: 100%; min-height: 50px; background: #0a0a0a; margin: 15px 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #333; border: 1px dashed #222; }
-    </style>
-</head>
-<body>
-
-<div class="main-container">
-    <h2>🚖 No Caminho Certo</h2>
-    <div class="small">Calculadora de Viagens</div>
-
-    <div class="ad-space">PUBLICIDADE</div>
-
-    <label>Origem</label>
-    <div class="input-voice-container">
-        <input type="text" id="origem" placeholder="Local de partida">
-        <div class="btn-group-input">
-            <div class="icon-btn" id="gpsOrigem">📍</div>
-            <div class="icon-btn" id="micOrigem">🎤</div>
-        </div>
-    </div>
-
-    <label>Destino</label>
-    <div class="input-voice-container">
-        <input type="text" id="destino" placeholder="Destino final">
-        <div class="btn-group-input">
-            <div class="icon-btn" id="micDestino">🎤</div>
-        </div>
-    </div>
-
-    <div class="checkbox-container">
-        <input type="checkbox" id="idaEVolta" checked>
-        <label style="margin:0; cursor:pointer" for="idaEVolta">Calcular Ida e Volta?</label>
-    </div>
-
-    <div class="row">
-        <div class="col"><button id="btnRoute" class="btn-primary">🗺️ Ver Rota</button></div>
-        <div class="col"><button id="btnClear" class="btn-ghost">Limpar</button></div>
-    </div>
-
-    <div id="map"></div>
-
-    <div class="row">
-        <div class="col"><label>KM</label><input type="number" id="km" readonly></div>
-        <div class="col"><label>Minutos</label><input type="number" id="tempo_min" readonly></div>
-    </div>
-
-    <div class="row">
-        <div class="col"><label>KM/L</label><input type="number" id="media" step="0.1"></div>
-        <div class="col"><label>Preço R$</label><input type="number" id="gasolina" step="0.01"></div>
-    </div>
-
-    <label>Valor a Cobrar (R$)</label>
-    <input type="number" id="cobrar" step="0.01">
-
-    <button id="btnCalc" class="btn-primary" style="background:#10b981;">💰 Calcular Lucro Líquido</button>
-    
-    <div id="resultado" class="result-box" style="display:none"></div>
-    <button id="btnZap" class="btn-whatsapp">📱 WhatsApp</button>
-
-    <div class="history-box" style="margin-top:20px">
-        <h4>🕒 Últimos Cálculos</h4>
-        <div id="listaHistorico"></div>
-    </div>
+<div class="privacidade-box">
+    🔒 <strong>Privacidade e Segurança</strong><br><br>
+    Este app utiliza sua localização apenas para o cálculo em tempo real. Nenhum dado é enviado para servidores externos além dos provedores oficiais de mapas (OSRM/OpenStreetMap). A conexão é protegida por protocolos de integridade.
 </div>
 
 <footer>
     <strong>Claudio Almeida.CAAS</strong><br>
     © <span id="ano"></span><br><br>
-
-    🗺️ Mapa: OpenStreetMap<br>
-    🚗 Rotas: OSRM (Open Source Routing Machine)<br>
-    📍 Geocodificação: Nominatim OpenStreetMap<br>
-    🎤 Voz: Web Speech API<br>
-    📡 GPS: Geolocation API do Navegador<br>
-    💬 Compartilhamento: WhatsApp API<br>
+    Serviços: OSM, OSRM, Nominatim e Web Speech API.
 </footer>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+        crossorigin=""></script>
+
 <script>
+    // Seleção de elementos
     const inputs = ['origem', 'destino', 'km', 'media', 'gasolina', 'cobrar', 'tempo_min'].reduce((acc, id) => ({...acc, [id]: document.getElementById(id)}), {});
     
-    const map = L.map('map').setView([-23.55, -46.63], 12);
+    // Inicialização do Mapa
+    const map = L.map('map', { zoomControl: false }).setView([-23.55, -46.63], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    let routeLayer = null, markers = [];
+    let routeLayer = null;
+    let markers = [];
 
-    async function geocode(query) {
-        if(query === "Minha Localização") return { lat: inputs.origem.dataset.lat, lon: inputs.origem.dataset.lon };
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
-        const data = await res.json();
-        return data.length ? { lat: data[0].lat, lon: data[0].lon } : null;
-    }
-
-    document.getElementById('gpsOrigem').onclick = () => {
-        navigator.geolocation.getCurrentPosition(p => {
-            inputs.origem.value = "Minha Localização";
-            inputs.origem.dataset.lat = p.coords.latitude;
-            inputs.origem.dataset.lon = p.coords.longitude;
-            map.setView([p.coords.latitude, p.coords.longitude], 15);
-        });
+    // Carregar preferências salvas
+    window.onload = () => {
+        inputs.media.value = localStorage.getItem('media') || '';
+        inputs.gasolina.value = localStorage.getItem('gasolina') || '';
+        document.getElementById("ano").textContent = new Date().getFullYear();
+        atualizarInterfaceHistorico();
     };
 
-    function iniciarVoz(inp) {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!Speech) return alert("Erro de voz");
-        const rec = new Speech();
-        rec.lang = "pt-BR";
-        rec.onresult = (e) => { inp.value = e.results[0][0].transcript; };
-        rec.start();
+    // --- FUNÇÃO GEOCODE (Texto para Coordenadas) ---
+    async function geocode(query) {
+        if(query === "Minha Localização") return { lat: inputs.origem.dataset.lat, lon: inputs.origem.dataset.lon };
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+            const data = await res.json();
+            return data.length ? { lat: data.lat, lon: data.lon } : null;
+        } catch (e) { return null; }
     }
 
+    // --- GPS ---
+    document.getElementById('gpsOrigem').onclick = () => {
+        if (!navigator.geolocation) return alert("GPS não suportado.");
+        navigator.geolocation.getCurrentPosition(p => {
+            const { latitude, longitude } = p.coords;
+            inputs.origem.value = "Minha Localização";
+            inputs.origem.dataset.lat = latitude;
+            inputs.origem.dataset.lon = longitude;
+            map.setView([latitude, longitude], 15);
+            L.marker([latitude, longitude]).addTo(map).bindPopup("Você está aqui").openPopup();
+        }, () => alert("Erro ao acessar GPS. Verifique as permissões."));
+    };
+
+    // --- VOZ ---
+    function iniciarVoz(inp) {
+        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!Speech) return alert("Navegador não suporta reconhecimento de voz.");
+        const rec = new Speech();
+        rec.lang = "pt-BR";
+        rec.onstart = () => inp.placeholder = "Ouvindo...";
+        rec.onresult = (e) => { 
+            inp.value = e.results.transcript;
+            inp.placeholder = "";
+        };
+        rec.onerror = () => { inp.placeholder = "Erro ao ouvir..."; };
+        rec.start();
+    }
     document.getElementById('micOrigem').onclick = () => iniciarVoz(inputs.origem);
     document.getElementById('micDestino').onclick = () => iniciarVoz(inputs.destino);
 
+    // --- ROTA ---
     document.getElementById('btnRoute').onclick = async () => {
+        const btn = document.getElementById('btnRoute');
+        if(!inputs.origem.value || !inputs.destino.value) return alert("Preencha os endereços.");
+
+        btn.innerText = "⏳ Calculando...";
         const a = await geocode(inputs.origem.value);
         const b = await geocode(inputs.destino.value);
-        if(!a || !b) return alert("Local não encontrado");
 
-        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`);
-        const data = await res.json();
-        const route = data.routes[0];
-        const multi = document.getElementById('idaEVolta').checked ? 2 : 1;
+        if(!a || !b) {
+            alert("Local não encontrado. Tente ser mais específico.");
+            btn.innerText = "🗺️ Ver Rota";
+            return;
+        }
 
-        inputs.km.value = ((route.distance / 1000) * multi).toFixed(2);
-        inputs.tempo_min.value = Math.round((route.duration / 60) * multi);
+        try {
+            const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`);
+            const data = await res.json();
+            const route = data.routes;
+            const multi = document.getElementById('idaEVolta').checked ? 2 : 1;
 
-        if (routeLayer) map.removeLayer(routeLayer);
-        routeLayer = L.geoJSON(route.geometry, {style: {color: '#06b6d4', weight: 6}}).addTo(map);
-        map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
+            inputs.km.value = ((route.distance / 1000) * multi).toFixed(2);
+            inputs.tempo_min.value = Math.round((route.duration / 60) * multi);
+
+            if (routeLayer) map.removeLayer(routeLayer);
+            markers.forEach(m => map.removeLayer(m));
+
+            routeLayer = L.geoJSON(route.geometry, {style: {color: '#06b6d4', weight: 6}}).addTo(map);
+            markers = [L.marker([a.lat, a.lon]).addTo(map), L.marker([b.lat, b.lon]).addTo(map)];
+            map.fitBounds(routeLayer.getBounds(), { padding: });
+
+        } catch (err) {
+            alert("Erro ao conectar com servidor de rotas.");
+        } finally {
+            btn.innerText = "🗺️ Ver Rota";
+        }
     };
 
+    // --- CÁLCULO FINANCEIRO ---
     document.getElementById('btnCalc').onclick = () => {
         const km = +inputs.km.value, med = +inputs.media.value, gas = +inputs.gasolina.value, cob = +inputs.cobrar.value;
+        if (!km || !med || !gas || !cob) return alert("Complete os dados de consumo e preço.");
+
+        localStorage.setItem('media', med);
+        localStorage.setItem('gasolina', gas);
+
         const custo = (km / med) * gas;
         const lucro = cob - custo;
 
         const resDiv = document.getElementById('resultado');
         resDiv.style.display = 'block';
-        resDiv.innerHTML = `💰 <b>LUCRO LÍQUIDO: <span class="kv">R$ ${lucro.toFixed(2)}</span></b>`;
+        resDiv.innerHTML = `
+            <div style="font-size:0.9rem">⛽ Gasto de Combustível: <span style="color:#ef4444">R$ ${custo.toFixed(2)}</span></div>
+            <div style="margin-top:5px; font-size:1.1rem">💰 <b>LUCRO LÍQUIDO: <span class="kv">R$ ${lucro.toFixed(2)}</span></b></div>
+        `;
         
-        document.getElementById('btnZap').style.display = 'block';
-        document.getElementById('btnZap').onclick = () => {
-            const txt = `*Calculadora Viagem*%0A📍 De: ${inputs.origem.value}%0A🏁 Para: ${inputs.destino.value}%0A💰 *Total: R$ ${cob.toFixed(2)}*`;
+        const btnZap = document.getElementById('btnZap');
+        btnZap.style.display = 'block';
+        btnZap.onclick = () => {
+            const txt = `*ORÇAMENTO DE VIAGEM*%0A📍 Origem: ${inputs.origem.value}%0A🏁 Destino: ${inputs.destino.value}%0A📏 Distância: ${km}km%0A💰 *Valor: R$ ${cob.toFixed(2)}*`;
             window.open(`https://wa.me/?text=${txt}`);
         };
+
+        salvarNoHistorico(inputs.destino.value, lucro);
     };
 
-    document.getElementById("ano").textContent = new Date().getFullYear();
+    // --- HISTÓRICO ---
+    function salvarNoHistorico(dest, lucro) {
+        let hist = JSON.parse(localStorage.getItem('historico') || '[]');
+        hist.unshift({ dest, lucro, hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+        localStorage.setItem('historico', JSON.stringify(hist.slice(0, 5)));
+        atualizarInterfaceHistorico();
+    }
+
+    function atualizarInterfaceHistorico() {
+        const lista = document.getElementById('listaHistorico');
+        const hist = JSON.parse(localStorage.getItem('historico') || '[]');
+        lista.innerHTML = hist.map(i => `
+            <div class="history-item">
+                <span>${i.hora} - ${i.dest.substring(0,15)}...</span>
+                <span class="kv">R$ ${i.lucro.toFixed(2)}</span>
+            </div>
+        `).join('') || '<p style="font-size:11px; color:#555">Nenhum cálculo recente.</p>';
+    }
+
+    document.getElementById('btnLimparHistorico').onclick = () => { localStorage.removeItem('historico'); atualizarInterfaceHistorico(); };
+    document.getElementById('btnClear').onclick = () => { if(confirm("Limpar todos os campos?")) location.reload(); };
 </script>
 </body>
 </html>
