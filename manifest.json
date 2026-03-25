@@ -1,10 +1,13 @@
 {
   "name": "No Caminho Certo",
   "short_name": "Caminho",
-  "start_url": ".",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#06b6d4",
+  "orientation": "portrait",
+  "description": "Calculadora de viagens para motoristas",
   "icons": [
     {
       "src": "icon-192.png",
