@@ -1,109 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>No Caminho Certo — Calculadora</title>
-    
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com;">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-	<meta name="referrer" content="no-referrer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>No Caminho Certo — Calculadora</title>
 
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#06b6d4">
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-          crossorigin=""/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com;">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<meta name="referrer" content="no-referrer">
 
-    <style>
-        :root { --primary: #06b6d4; --bg: #000; --card-bg: #0b0b0b; --text: #fff; --border: #222; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; max-width: 720px; margin: 0 auto; padding: 16px; box-sizing: border-box; }
-        *, *::before, *::after { box-sizing: border-box; }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 5px; font-weight: 700; }
-        .small { font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 15px; }
-        label { display: block; margin-top: 12px; color: #cbd5e1; font-size: 0.9rem; }
-        input { width: 100%; padding: 12px; margin-top: 6px; background: var(--card-bg); color: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; outline: none; }
-        input:focus { border-color: var(--primary); }
-        .checkbox-container { display: flex; align-items: center; margin-top: 15px; gap: 10px; background: #111; padding: 12px; border-radius: 8px; border: 1px solid #222; }
-        .input-voice-container { position: relative; }
-        .btn-group-input { position: absolute; right: 8px; top: 12px; display: flex; gap: 5px; }
-        .icon-btn { background: #222; width: 34px; height: 34px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #333; transition: 0.2s; }
-        .icon-btn:active { background: var(--primary); color: #000; }
-        button { width: 100%; margin-top: 10px; padding: 14px; font-weight: bold; border-radius: 8px; border: 0; cursor: pointer; transition: 0.3s; }
-        button:active { transform: scale(0.98); }
-        .btn-primary { background: var(--primary); color: #001; }
-        .btn-ghost { background: #1f2937; color: #fff; }
-        .btn-whatsapp { background: #25d366; color: #fff; margin-top: 10px; display: none; }
-        .row { display: flex; gap: 10px; }
-        .col { flex: 1; }
-        #map { height: 250px; margin-top: 16px; border-radius: 12px; border: 1px solid #222; z-index: 1; background: #000; }
-        .result-box { margin-top: 16px; background: #06161a; padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary); line-height: 1.6; }
-        .kv { color: #86efac; font-weight: 700; }
-        .history-item { background: #111; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; border: 1px solid #222; }
-        .privacidade-box { margin-top:30px; padding:15px; background:#0a0a0a; border:1px solid #222; border-radius:10px; font-size:12px; color:#9ca3af; }
-        footer { margin-top: 40px; padding: 20px; border-top: 1px solid #222; text-align: center; font-size: 11px; color: #64748b; }
-    </style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#06b6d4">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+:root { --primary:#06b6d4; --bg:#000; --card-bg:#0b0b0b; --text:#fff; --border:#222; }
+body { background:var(--bg); color:var(--text); font-family:sans-serif; max-width:720px; margin:auto; padding:16px }
+h2 { text-align:center; color:var(--primary) }
+label { display:block; margin-top:12px; font-size:0.9rem; color:#cbd5e1 }
+input { width:100%; padding:12px; margin-top:6px; background:#0b0b0b; color:#fff; border:1px solid #222; border-radius:8px }
+.row { display:flex; gap:10px }
+.col { flex:1 }
+button { width:100%; padding:14px; margin-top:10px; border-radius:8px; border:0; font-weight:bold; cursor:pointer }
+.btn-primary { background:#06b6d4; color:#000 }
+.btn-ghost { background:#1f2937; color:#fff }
+.btn-whatsapp { background:#25d366; color:#fff; display:none }
+#map { height:250px; margin-top:16px; border-radius:12px; background:#000 }
+.result-box { margin-top:16px; background:#06161a; padding:16px; border-radius:10px; border-left:4px solid var(--primary) }
+.kv { color:#86efac; font-weight:700 }
+.history-item { background:#111; padding:8px; margin-top:5px; border-radius:6px; display:flex; justify-content:space-between }
+footer { margin-top:30px; text-align:center; font-size:11px; color:#64748b }
+.input-voice-container { position:relative }
+.btn-group-input { position:absolute; right:8px; top:12px; display:flex; gap:5px }
+.icon-btn { background:#222; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer }
+</style>
 </head>
+
 <body>
 
-<div class="main-container">
-    <h2>🚖 No Caminho Certo</h2>
-    <div class="small">Calculadora de Viagens</div>
+<h2>🚖 No Caminho Certo</h2>
 
-    <label>Origem</label>
-    <div class="input-voice-container">
-        <input type="text" id="origem" placeholder="Local de partida">
-        <div class="btn-group-input">
-            <div class="icon-btn" id="gpsOrigem" title="Usar meu GPS">📍</div>
-            <div class="icon-btn" id="micOrigem" title="Falar origem">🎤</div>
-        </div>
-    </div>
-
-    <label>Destino</label>
-    <div class="input-voice-container">
-        <input type="text" id="destino" placeholder="Destino final">
-        <div class="btn-group-input">
-            <div class="icon-btn" id="micDestino" title="Falar destino">🎤</div>
-        </div>
-    </div>
-
-    <div class="checkbox-container">
-        <input type="checkbox" id="idaEVolta" checked>
-        <label style="margin:0; cursor:pointer" for="idaEVolta">Calcular Ida e Volta?</label>
-    </div>
-
-    <div class="row">
-        <div class="col"><button id="btnRoute" class="btn-primary">🗺️ Ver Rota</button></div>
-        <div class="col"><button id="btnClear" class="btn-ghost">Limpar</button></div>
-    </div>
-
-    <div id="map"></div>
-
-    <div class="row">
-        <div class="col"><label>KM Total</label><input type="number" id="km" readonly></div>
-        <div class="col"><label>Tempo (Min)</label><input type="number" id="tempo_min" readonly></div>
-    </div>
-
-    <div class="row">
-        <div class="col"><label>Consumo (KM/L)</label><input type="number" id="media" step="0.1" placeholder="Ex: 10.5"></div>
-        <div class="col"><label>Preço Litro (R$)</label><input type="number" id="gasolina" step="0.01" placeholder="Ex: 5.89"></div>
-    </div>
-
-    <label>Valor da Corrida (R$)</label>
-    <input type="number" id="cobrar" step="0.01" placeholder="Quanto vai cobrar do cliente">
-
-    <button id="btnCalc" class="btn-primary" style="background:#10b981; margin-top: 20px;">💰 Calcular Lucro Líquido</button>
-    
-    <div id="resultado" class="result-box" style="display:none"></div>
-    <button id="btnZap" class="btn-whatsapp">📱 Enviar Orçamento via WhatsApp</button>
-
-    <div class="history-box" style="margin-top:25px">
-        <h4 style="margin-bottom:10px; color:var(--primary)">🕒 Últimos Cálculos</h4>
-        <div id="listaHistorico"></div>
-        <button id="btnLimparHistorico" class="btn-ghost" style="font-size: 10px; padding: 5px; width: auto; margin-top:10px;">Apagar Histórico</button>
-    </div>
+<label>Origem</label>
+<div class="input-voice-container">
+<input id="origem">
+<div class="btn-group-input">
+<div class="icon-btn" id="gpsOrigem">📍</div>
+<div class="icon-btn" id="micOrigem">🎤</div>
 </div>
+</div>
+
+<label>Destino</label>
+<div class="input-voice-container">
+<input id="destino">
+<div class="btn-group-input">
+<div class="icon-btn" id="micDestino">🎤</div>
+</div>
+</div>
+
+<div>
+<input type="checkbox" id="idaEVolta" checked> Ida e volta
+</div>
+
+<div class="row">
+<div class="col"><button id="btnRoute" class="btn-primary">Ver Rota</button></div>
+<div class="col"><button id="btnClear" class="btn-ghost">Limpar</button></div>
+</div>
+
+<div id="map"></div>
+
+<div class="row">
+<div class="col"><label>KM</label><input id="km" readonly></div>
+<div class="col"><label>Tempo</label><input id="tempo_min" readonly></div>
+</div>
+
+<div class="row">
+<div class="col"><label>Consumo</label><input id="media"></div>
+<div class="col"><label>Gasolina</label><input id="gasolina"></div>
+</div>
+
+<label>Valor</label>
+<input id="cobrar">
+
+<button id="btnCalc" class="btn-primary">Calcular</button>
+
+<div id="resultado" class="result-box" style="display:none"></div>
+<button id="btnZap" class="btn-whatsapp">WhatsApp</button>
+
+<h4>Histórico</h4>
+<div id="listaHistorico"></div>
+<button id="btnLimparHistorico">Limpar Histórico</button>
 
 <div class="privacidade-box">
     🔒 <strong>Privacidade e Segurança</strong><br><br>
@@ -111,161 +97,136 @@
 </div>
 
 <footer>
-    <strong>Claudio Almeida.CAAS</strong><br>
-    © <span id="ano"></span><br><br>
-    Serviços: OSM, OSRM, Nominatim e Web Speech API.
+<strong>Claudio Almeida.CAAS</strong><br>
+© <span id="ano"></span><br>
+OpenStreetMap • OSRM • Voz Web API 
 </footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
-        crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    const inputs = ['origem', 'destino', 'km', 'media', 'gasolina', 'cobrar', 'tempo_min']
-    .reduce((acc, id) => ({...acc, [id]: document.getElementById(id)}), {});
-    
-    const map = L.map('map').setView([-23.55, -46.63], 12);
+// MAPA
+const map = L.map('map').setView([-29.68,-53.8],12);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+subdomains:'abcd'
+}).addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+let routeLayer;
 
-    let routeLayer = null;
+// GEO
+async function geo(q){
+let r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}`);
+let d=await r.json();
+return d[0]?{lat:+d[0].lat,lon:+d[0].lon}:null;
+}
 
-    // --- GEOCODE CORRIGIDO ---
-    async function geocode(query) {
-        try {
-            if(query === "Minha Localização") {
-                return {
-                    lat: parseFloat(inputs.origem.dataset.lat),
-                    lon: parseFloat(inputs.origem.dataset.lon)
-                };
-            }
+// ROTA
+btnRoute.onclick=async()=>{
+let a=await geo(origem.value);
+let b=await geo(destino.value);
+if(!a||!b)return alert("Erro ao localizar");
 
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
-                headers: {
-                    'User-Agent': 'TaxiApp/1.0'
-                }
-            });
+let r=await fetch(`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`);
+let d=await r.json();
 
-            const data = await res.json();
+let rt=d.routes[0];
+let m=idaEVolta.checked?2:1;
 
-            if (!data || data.length === 0) return null;
+km.value=(rt.distance/1000*m).toFixed(2);
+tempo_min.value=Math.round(rt.duration/60*m);
 
-            return {
-                lat: parseFloat(data[0].lat),
-                lon: parseFloat(data[0].lon)
-            };
+if(routeLayer)map.removeLayer(routeLayer);
+routeLayer=L.geoJSON(rt.geometry,{style:{color:'#06b6d4',weight:6}}).addTo(map);
+map.fitBounds(routeLayer.getBounds());
+};
 
-        } catch (e) {
-            alert("Erro ao buscar localização");
-            return null;
-        }
-    }
+// CALCULO
+btnCalc.onclick=()=>{
+let k=+km.value,m=+media.value,g=+gasolina.value,c=+cobrar.value;
+if(!k||!m||!g||!c)return alert("Preencha tudo");
 
-    // --- GPS ---
-    document.getElementById('gpsOrigem').onclick = () => {
-        navigator.geolocation.getCurrentPosition(p => {
-            inputs.origem.value = "Minha Localização";
-            inputs.origem.dataset.lat = p.coords.latitude;
-            inputs.origem.dataset.lon = p.coords.longitude;
-            map.setView([p.coords.latitude, p.coords.longitude], 15);
-        }, () => {
-            alert("Erro ao obter localização");
-        });
-    };
+let litros=k/m;
+let custo=litros*g;
+let lucro=c-custo;
 
-    // --- VOZ CORRIGIDA ---
-    function iniciarVoz(inp) {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+resultado.style.display="block";
+resultado.innerHTML=`
+📍 <b>${origem.value}</b> → <b>${destino.value}</b><br><br>
+📏 ${k} km | ⏱ ${tempo_min.value} min<br>
+⛽ ${litros.toFixed(2)} L | 💸 R$ ${custo.toFixed(2)}<br><br>
+💰 Cobrado: R$ ${c}<br>
+🚀 Lucro: <span class="kv">R$ ${lucro.toFixed(2)}</span>
+`;
 
-        if (!Speech) {
-            alert("Seu navegador não suporta áudio");
-            return;
-        }
+btnZap.style.display="block";
 
-        const rec = new Speech();
-        rec.lang = "pt-BR";
-        rec.interimResults = false;
-        rec.maxAlternatives = 1;
+btnZap.onclick=()=>{
+let txt=`🚖 Corrida
 
-        rec.onresult = (e) => {
-            inp.value = e.results[0][0].transcript;
-            rec.stop();
-        };
+Origem: ${origem.value}
+Destino: ${destino.value}
 
-        rec.onerror = () => {
-            alert("Erro no reconhecimento de voz");
-        };
+${k} km | ${tempo_min.value} min
 
-        rec.start();
-    }
+Valor: R$ ${c}
+Custo: R$ ${custo.toFixed(2)}
+Lucro: R$ ${lucro.toFixed(2)}
+`;
 
-    document.getElementById('micOrigem').onclick = () => iniciarVoz(inputs.origem);
-    document.getElementById('micDestino').onclick = () => iniciarVoz(inputs.destino);
+window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
+};
 
-    // --- ROTA CORRIGIDA ---
-    document.getElementById('btnRoute').onclick = async () => {
-        const a = await geocode(inputs.origem.value);
-        const b = await geocode(inputs.destino.value);
+salvarHist(origem.value,destino.value,c);
+};
 
-        if(!a || !b) {
-            alert("Local não encontrado");
-            return;
-        }
+// HISTORICO
+function salvarHist(o,d,v){
+let h=JSON.parse(localStorage.getItem("h")||"[]");
+h.unshift({o,d,v});
+h=h.slice(0,5);
+localStorage.setItem("h",JSON.stringify(h));
+renderHist();
+}
 
-        try {
-            const res = await fetch(
-                `https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson&steps=false`
-            );
+function renderHist(){
+let h=JSON.parse(localStorage.getItem("h")||"[]");
+listaHistorico.innerHTML=h.map(i=>`<div class="history-item">${i.o} → ${i.d}<b>R$${i.v}</b></div>`).join('');
+}
 
-            const data = await res.json();
+btnLimparHistorico.onclick=()=>{
+localStorage.removeItem("h");
+renderHist();
+};
 
-            if (!data.routes || data.routes.length === 0) {
-                alert("Rota não encontrada");
-                return;
-            }
+renderHist();
 
-            const route = data.routes[0];
-            const multi = document.getElementById('idaEVolta').checked ? 2 : 1;
+// VOZ
+function voz(inp){
+let r=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+r.lang="pt-BR";
+r.onresult=e=>inp.value=e.results[0][0].transcript;
+r.start();
+}
+micOrigem.onclick=()=>voz(origem);
+micDestino.onclick=()=>voz(destino);
 
-            inputs.km.value = ((route.distance / 1000) * multi).toFixed(2);
-            inputs.tempo_min.value = Math.round((route.duration / 60) * multi);
+// GPS
+gpsOrigem.onclick=()=>{
+navigator.geolocation.getCurrentPosition(p=>{
+origem.value=`${p.coords.latitude},${p.coords.longitude}`;
+});
+};
 
-            if (routeLayer) map.removeLayer(routeLayer);
+// CLEAR
+btnClear.onclick=()=>location.reload();
 
-            routeLayer = L.geoJSON(route.geometry, {
-                style: {color: '#06b6d4', weight: 6}
-            }).addTo(map);
+// PWA
+if('serviceWorker' in navigator){
+navigator.serviceWorker.register('sw.js');
+}
 
-            map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
-
-        } catch (e) {
-            alert("Erro ao calcular rota");
-        }
-    };
-
-    document.getElementById('btnCalc').onclick = () => {
-        const km = +inputs.km.value,
-              med = +inputs.media.value,
-              gas = +inputs.gasolina.value,
-              cob = +inputs.cobrar.value;
-
-        const custo = (km / med) * gas;
-        const lucro = cob - custo;
-
-        const resDiv = document.getElementById('resultado');
-        resDiv.style.display = 'block';
-        resDiv.innerHTML = `💰 <b>LUCRO LÍQUIDO: <span class="kv">R$ ${lucro.toFixed(2)}</span></b>`;
-        
-        document.getElementById('btnZap').style.display = 'block';
-        document.getElementById('btnZap').onclick = () => {
-            const txt = `*Calculadora Viagem*%0A📍 De: ${inputs.origem.value}%0A🏁 Para: ${inputs.destino.value}%0A💰 *Total: R$ ${cob.toFixed(2)}*`;
-            window.open(`https://wa.me/?text=${txt}`);
-        };
-    };
-
-    document.getElementById("ano").textContent = new Date().getFullYear();
+ano.textContent=new Date().getFullYear();
 </script>
+
 </body>
 </html>
