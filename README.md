@@ -67,7 +67,7 @@ Todo o processamento acontece **localmente no navegador**, sem envio de dados pa
 
 O sistema pode ser utilizado diretamente no navegador:
 
-👉 https://claudioalmeida23.github.io/calculadora-corridas/
+👉 (https://calculadoradcorridas.netlify.app/)
 
 ---
 
