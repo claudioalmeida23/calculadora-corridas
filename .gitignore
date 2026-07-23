@@ -1,0 +1,28 @@
+# ==============================================================================
+# NO CAMINHO CERTO - CALCULADORA - .gitignore
+# ==============================================================================
+
+# Dependências e Módulos Locais (Node.js / npm caso venha a usar)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Pastas de IDEs e Editores (VS Code, WebStorm, etc.)
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+*.swo
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos temporários e de build locais
+*.log
+*.tmp
+dist/
+build/
